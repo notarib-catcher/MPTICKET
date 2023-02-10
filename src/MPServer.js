@@ -14,6 +14,7 @@ class Server{
         this.revocations = this.mongo.db(config.DBName).collection('revocations')
         this.kiosks = this.mongo.db(config.DBName).collection('kiosks')
         this.alerts = this.mongo.db(config.DBName).collection('alerts')
+        this.events = this.mongo.db(config.DBName).collection('events')
         this.sign_privatekey = privatekey
         this.sign_publickey = publickey
         this.config = config
@@ -62,30 +63,71 @@ class Server{
      */
 
     verify = async (req,res) => {
+        let checks = await this.verifytoken(req,res).catch(error => console.error)
+        res.status(checks[0])
+        res.send(checks[1])
+    }
+
+
+
+    verifytoken = async (req,res) => {
         try{
-            let decoded = jwt.verify(req.params.token, this.sign_publickey)
-            if(this.revocations.findOne({_id : decoded._id})){
-                let revdoc = await this.revocations.findOne(decoded._id)
-                if(revdoc.type == "full"){
+            let decoded = jwt.verify(req.query["token"], this.sign_publickey)
+            let revdoc  = await this.revocations.findOne({_id : decoded._id})
+            if(revdoc){
+                //check for ticket invalidation
+                if(revdoc.type.includes("!FULL!")){
                     throw "TICKET REVOKED"
+                }
+            
+            }
+
+            //is there an event-specific query?
+            if(req.query["event"]){
+                let event = await this.events.findOne({_id : req.query["event"]})
+                if(event){
+                    //event is valid
+
+                    //check for event-specific revocation
+                    if(revdoc){
+                        if(revdoc.type.includes(req.query["event"])){
+                            return[403, "barred from event"];
+                        }
+                    }
+                    
+                    
+                    //check if the pass is allowed to access that event
+                    if(!event.typesallowed.includes(decoded.type) && !event.typesallowed.includes("!ALL!")){
+                        return[403, "this ticket type cannot access this event"];
+                    }
+
+                    //check for second time attending
+                    let ticket = await this.tickets.findOne({_id:  decoded._id})
+                    if (ticket.eventsAttended){
+                        if(ticket.eventsAttended.includes(req.query["event"])){
+                            return [403, "already attended"];
+                        }
+                    }
+                }
+
+                else{
+                    return [404, "event not found"];
                 }
             }
 
-            res.status(200)
-            res.send("Valid")
+
+            // all checks passed
+
+            return [200, "valid"];
         }
 
         catch(error){
             console.error(error)
-            res.status(401)
             let responseStr = "Unable to authenticate"
-            if(error == "TICKET REVOKED"){
+            if(typeof(error) == "string"){
                 responseStr = error
             }
-            
-
-            res.send(responseStr)
-            return
+            return [401, responseStr]
         }
     }
 }
