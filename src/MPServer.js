@@ -77,7 +77,7 @@ class Server{
             if(revdoc){
                 //check for ticket invalidation
                 if(revdoc.type.includes("!FULL!")){
-                    throw "TICKET REVOKED"
+                    throw "TICKET REVOKED! Reason: " + revdoc.reason
                 }
             
             }
@@ -91,14 +91,14 @@ class Server{
                     //check for event-specific revocation
                     if(revdoc){
                         if(revdoc.type.includes(req.query["event"])){
-                            return[403, "barred from event"];
+                            return[403, "Barred from event! Reason: " + revdoc.reason];
                         }
                     }
                     
                     
                     //check if the pass is allowed to access that event
                     if(!event.typesAllowed.includes(decoded.type) && !event.typesAllowed.includes("!ALL!")){
-                        return[403, "this ticket type cannot access this event"];
+                        return[403, `this ticket type cannot access ${event.name}`];
                     }
 
                     //check for second time attending
