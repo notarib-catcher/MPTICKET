@@ -3,7 +3,7 @@
 ## tickets
 ```json
 {
-    "_id" : "UNIQUE TICKET UUID",
+    "_id" : "TICKET UUID",
     "Name" : "HOLDER NAME",
     "type" : "Case-sensitive ticket type (ex. gold, silver, etc.)",
     "phone" : "Holders phone number",
@@ -22,7 +22,7 @@
 ## events
 ```json
 {
-    "_id":"UNIQUE EVENT UUID",
+    "_id":"EVENT UUID",
     "typesAllowed": "!ALL! to allow all ticket types, otherwise COMMA SEPARATED ticket types (see ticket above^)"
 }
 ```
