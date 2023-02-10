@@ -36,6 +36,7 @@ class Server{
                     let data = {"_id" : uuid, name: decoded.name, type: decoded.type, phone: decoded.phone }
                     let token = jwt.sign(data, this.sign_privatekey, {algorithm: 'RS256'})
                     this.tickets.insertOne(data)
+                    res.type('text')
                     res.status(201)
                     res.send(token)
                 }
@@ -51,6 +52,7 @@ class Server{
         }
         catch(error){
             console.error(error);
+            res.type('text')
             res.status(401)
             res.send('Unable to authenticate')
         }
@@ -64,6 +66,7 @@ class Server{
 
     verify = async (req,res) => {
         let checks = await this.verifytoken(req,res).catch(error => console.error)
+        res.type('text')
         res.status(checks[0])
         res.send(checks[1])
     }
