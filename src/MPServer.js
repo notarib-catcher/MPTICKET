@@ -97,7 +97,7 @@ class Server{
                     
                     
                     //check if the pass is allowed to access that event
-                    if(!event.typesallowed.includes(decoded.type) && !event.typesallowed.includes("!ALL!")){
+                    if(!event.typesallowed.includes(decoded.type) && !event.typesAllowed.includes("!ALL!")){
                         return[403, "this ticket type cannot access this event"];
                     }
 
@@ -130,5 +130,7 @@ class Server{
             return [401, responseStr]
         }
     }
+
+
 }
 module.exports = Server
