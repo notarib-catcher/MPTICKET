@@ -1,0 +1,11 @@
+{
+    "websitePublicKeyPath" : "./keys/webkeypub.pem",
+    "issuingPrivateKeyPath" : "./keys/priv.pem",
+    "issuingPublicKeyPath" : "./keys/pub.pem",
+    "offlineKiosk" : "false",
+    "https" : "false",
+    "port" : 80,
+    "enrollment" : "true",
+    "mongodburl" : "mongodb+srv://USER:PASSWORD@HOST.COM/?retryWrites=true&w=majority" ,
+    "DBName" : "NAMEOFDATABASE"
+}

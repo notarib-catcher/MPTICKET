@@ -1,0 +1,17 @@
+{
+  "name": "manipal_ticketing_server",
+  "version": "1.0.0",
+  "description": "Provides a simple REST API for issuing and verifying tokens",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "Aaryan Dwivedi",
+  "license": "ISC",
+  "dependencies": {
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.0",
+    "mongodb": "^5.0.1",
+    "uuid": "^9.0.0"
+  }
+}
