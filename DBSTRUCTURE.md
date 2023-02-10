@@ -28,3 +28,13 @@
     "typesAllowed": "!ALL! to allow all ticket types, otherwise COMMA SEPARATED ticket types (see ticket above^)"
 }
 ```
+***
+## kiosks
+```json
+{
+    "_id":"KIOSK UUID",
+    "assigned":"COMMA SEPARATED eventIDs that the kiosk can mark attendance for",
+    "enrollDone": <Boolean>, //True => Enrollment completed - blocks enrollment again. False => Enrollment allowed.
+    "enrollCode":"XXXX", //4-letter case-INsensitive code to use for enrollment, kinda like an OTP.
+    "name":"HUMAN READABLE NAME"
+}

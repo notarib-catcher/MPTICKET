@@ -1,3 +1,4 @@
+const { text } = require('express');
 const jwt = require('jsonwebtoken')
 const { MongoClient, MongoServerError } = require('mongodb')
 const { v4: uuidv4 } = require('uuid');
@@ -73,9 +74,16 @@ class Server{
 
 
 
-    verifytoken = async (req,res) => {
+    verifytoken = async (req,res,query = true) => {
         try{
-            let decoded = jwt.verify(req.query["token"], this.sign_publickey)
+            let datsrc
+            if(query){
+                datsrc = req.query
+            }
+            else{
+                datsrc = req.body
+            }
+            let decoded = jwt.verify(datsrc["token"], this.sign_publickey)
             let revdoc  = await this.revocations.findOne({_id : decoded._id})
             if(revdoc){
                 //check for ticket invalidation
@@ -87,13 +95,13 @@ class Server{
 
             //is there an event-specific query?
             if(req.query["event"]){
-                let event = await this.events.findOne({_id : req.query["event"]})
+                let event = await this.events.findOne({_id : datsrc["event"]})
                 if(event){
                     //event is valid
 
                     //check for event-specific revocation
                     if(revdoc){
-                        if(revdoc.type.includes(req.query["event"])){
+                        if(revdoc.type.includes(datsrc["event"])){
                             return[403, "Barred from event! Reason: " + revdoc.reason];
                         }
                     }
@@ -107,7 +115,7 @@ class Server{
                     //check for second time attending
                     let ticket = await this.tickets.findOne({_id:  decoded._id})
                     if (ticket.eventsAttended){
-                        if(ticket.eventsAttended.includes(req.query["event"])){
+                        if(ticket.eventsAttended.includes(datsrc["event"])){
                             return [403, "already attended"];
                         }
                     }
@@ -121,7 +129,7 @@ class Server{
 
             // all checks passed
 
-            return [200, "valid"];
+            return [200, "valid", decoded];
         }
 
         catch(error){
@@ -132,6 +140,122 @@ class Server{
             }
             return [401, responseStr]
         }
+    }
+
+
+    enroll = async (req,res) => {
+        let code = req.body.code
+        let name = req.body.name
+        if(code && name){
+            code = code.toLowerCase()
+        }
+        else{
+            res.status(400)
+            res.type('text')
+            res.send("Malformed request")
+            return;
+        }
+        let kiosk = await this.kiosks.findOne({enrollCode : { $eq : code}})
+
+        if(kiosk){
+            if(!kiosk.enrollDone){
+                await this.kiosks.updateOne({_id : kiosk._id}, {
+                    $set: {
+                        "enrollDone" : true,
+                        "assignment" : "",
+                        "name" : name
+                    }
+                })
+                res.status(200)
+                res.type('text')
+                let token = jwt.sign({_id:kiosk._id}, this.sign_privatekey, {algorithm: 'RS256'})
+                res.send(token)
+            }
+            else{
+                res.status(409)
+                res.type('text')
+                res.send('Kiosk registration not available')
+            }
+
+        }
+        else{
+            res.status(404)
+            res.send("Instance not found")
+        }
+    }
+
+    mark = async (req,res) => {
+        let event = req.body.event
+        let kiosktoken = req.body.kioskToken
+        if(!event || !kiosktoken){
+            res.status(400)
+            res.type('text')
+            res.send("Malformed request")
+            return;
+        }
+        let tokenStatus = await this.verifytoken(req, res, false)
+        
+        if(tokenStatus[0] != 200){
+            res.status(tokenStatus[0])
+            res.type('text')
+            res.send(tokenStatus[1])
+            return;
+        }
+        let decoded = tokenStatus[2]
+        //ticket is valid and can attend event!
+
+        //check if kiosk has authority
+        try{
+            let kioskdecoded = jwt.verify(kiosktoken, this.sign_publickey)
+            try{
+                //make sure kiosk still exists in pool
+                let kiosk = await this.kiosks.findOne({_id:kioskdecoded._id})
+                if(!kiosk){
+                    throw error
+                }
+                //make sure it is assigned to the event
+                if(!kiosk.assignment.includes(event) && !kiosk.assignment.includes('!ALL!')){
+                    throw error
+                }
+                //all checks met! lets add attendance!
+                let ticket = await this.tickets.findOne({_id: decoded._id})
+                
+                //redundant check
+                if(!ticket){
+                    res.set(404)
+                    res.send("Failed to query ticket")
+                    return
+                }
+
+                let newattendance = ticket.eventsAttended || ""
+                newattendance = newattendance + "," + event
+
+                await this.tickets.updateOne({_id : ticket._id}, {$set:{eventsAttended : newattendance}})
+
+                res.status(200)
+                res.type('text')
+                res.send('Updated attendance')
+                return
+
+            }
+            catch(error){
+                console.error(error)
+                res.status(409)
+                res.type('text')
+                res.send("Misconfigured endpoint")
+                return
+            }
+
+        }
+        catch(error){
+            res.status(401)
+            res.type('text')
+            res.send("Unable to authenticate")
+            return;
+        }
+        
+
+
     }
 
 
