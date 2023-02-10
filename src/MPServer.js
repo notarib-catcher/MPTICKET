@@ -97,7 +97,7 @@ class Server{
                     
                     
                     //check if the pass is allowed to access that event
-                    if(!event.typesallowed.includes(decoded.type) && !event.typesAllowed.includes("!ALL!")){
+                    if(!event.typesAllowed.includes(decoded.type) && !event.typesAllowed.includes("!ALL!")){
                         return[403, "this ticket type cannot access this event"];
                     }
 
