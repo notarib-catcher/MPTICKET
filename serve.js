@@ -61,7 +61,7 @@ else {
     app.listen(config.port)
 }
 
-app.put('/sign', async (req,res) => {
+app.post('/sign', async (req,res) => {
     try{
         mpserver.sign(req,res).catch(error => console.error)
     }
@@ -79,7 +79,7 @@ app.get('/verify', async (req,res) => {
     }
 })
 
-app.post('/enroll', async (req,res) => {
+app.put('/enroll', async (req,res) => {
     try{
         mpserver.enroll(req,res).catch(error => console.error)
     }
@@ -88,7 +88,7 @@ app.post('/enroll', async (req,res) => {
     }
 })
 
-app.post('/mark', async (req,res) => {
+app.put('/mark', async (req,res) => {
     try{
         mpserver.mark(req,res).catch(error => console.error)
     }
