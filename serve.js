@@ -97,6 +97,14 @@ app.put('/mark', async (req,res) => {
     }
 })
 
+app.get('/assignment', async (req,res) => {
+    try{
+        mpserver.assignment(req,res).catch(error => console.error)
+    }
+    catch(error){
+        console.error(error)
+    }
+})
 
 app.get('/', async (req,res) => {
     res.status = 200

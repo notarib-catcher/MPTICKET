@@ -258,6 +258,54 @@ class Server{
 
     }
 
+    assignment = async (req,res) => {
+        let kiosktoken = req.query.kioskToken
+        if(!kiosktoken){
+            res.status(400)
+            res.type('text')
+            res.send('Malformed request')
+        }
+        try {
+            let decoded = jwt.verify(kiosktoken, this.sign_publickey)
+            let kiosk = await this.kiosks.findOne({_id : decoded._id})
+            if(!kiosk){
+                throw "404"
+            }
+
+            if(!kiosk.enrollDone){
+                throw "409"
+            }
+
+            if(kiosk.assignment == ""){
+                res.status(204)
+                res.type('text')
+                res.send("No assignment")
+                return
+            }
+
+            res.status(200)
+            res.type('text')
+            res.send(kiosk.assignment)
+        }
+
+        catch(error){
+            if(error == "404"){
+                res.status = 404
+                res.send("Entry not found")
+                return
+            }
+
+            if(error == "409"){
+                res.status = 404
+                res.send("Misconfigured endpoint")
+                return
+            }
+
+            res.status(401)
+            res.send("Unable to authenticate")
+        }
+    }
+
 
 }
 module.exports = Server
