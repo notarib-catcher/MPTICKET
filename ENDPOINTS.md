@@ -36,6 +36,7 @@ Returns
 ```
 Returns
 ```
+503 - Server configuration does not allow for enrollment (edit the config.json)
 409 - Already registered
 404 - code not found
 400 - Malformed request
@@ -58,5 +59,21 @@ Returns
 409 - Misconfigured endpoint - forces kiosk to wipe all cached data EXCEPT kiosktoken and URL, then poll /assignment for the new assignment.
  + Same errors as /verify
 200 - Success
+```
+***
+## GET /assignment
+```json
+{
+    "kioskToken" : "signed.kiosk.token"
+}
+```
+Returns
+```
+400 - malformed request
+404 - kiosk does not exist (Probably deleted / unregistered by an admin)
+401 - token invalid
+409 - enrollment status conflict (kiosk enrollment not finished)
+204 - no assignment
+200 - Success - Body contains the assignment string
 ```
 

@@ -144,6 +144,11 @@ class Server{
 
 
     enroll = async (req,res) => {
+        if(!this.config.enrollment){
+            res.status(503)
+            res.type('text')
+            res.send('Enrollment disabled')
+        }
         let code = req.body.code
         let name = req.body.name
         if(code && name){
