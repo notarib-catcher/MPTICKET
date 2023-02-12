@@ -13,5 +13,6 @@ Will add documentation about kiosk behaviour here once the Android kiosk app is 
  - Assigning kiosks to specific events
  - Revocation of tickets
  - Barring of tickets from a particular event
+ - "Tiers" or "Types" of tickets which are able to access specific events
 
 Makes heavy use of Asymmetric JWTs.
