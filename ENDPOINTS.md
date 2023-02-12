@@ -76,4 +76,10 @@ Returns
 204 - no assignment
 200 - Success - Body contains the assignment string
 ```
-
+***
+## GET /key
+No query parameters or body
+Returns
+```
+200 - the public key used to verify kiosktokens and tickets' JWTs.
+```

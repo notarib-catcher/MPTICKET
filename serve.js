@@ -111,6 +111,15 @@ app.get('/', async (req,res) => {
     res.send(`MPTKT${package.version}++${config.enrollment}`)
 })
 
+app.get('/key', async (req,res) => {
+    try{
+        mpserver.getkey(req,res).catch(error => console.error)
+    }
+    catch(error){
+        console.error(error)
+    }
+})
+
 console.groupEnd()
 console.log('Started!')
 

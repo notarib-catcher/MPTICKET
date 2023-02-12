@@ -311,6 +311,12 @@ class Server{
         }
     }
 
+    getkey = async (req,res) => {
+        res.type(text)
+        res.status(200)
+        res.send(this.sign_publickey)
+    }
+
 
 }
 module.exports = Server
