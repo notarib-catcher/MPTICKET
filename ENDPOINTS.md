@@ -27,7 +27,7 @@ Returns
 200 - valid
 ```
 ***
-## PUT /enroll
+## POST /enroll
 ```json
 {
     "code" : "abcd", //4 letter enrollment code

@@ -185,6 +185,7 @@ class Server{
         }
         else{
             res.status(404)
+            console.log("Attempted enroll " + code + " as " + name)
             res.send("Instance not found")
         }
     }

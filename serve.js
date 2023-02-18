@@ -79,7 +79,7 @@ app.get('/verify', async (req,res) => {
     }
 })
 
-app.put('/enroll', async (req,res) => {
+app.post('/enroll', async (req,res) => {
     try{
         mpserver.enroll(req,res).catch(error => console.error)
     }
