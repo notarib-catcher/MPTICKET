@@ -93,6 +93,10 @@ class Server{
             
             }
 
+            if(decoded.type.includes("!STAFF!")){
+                return [200, "staff", decoded]; 
+            }
+
             //is there an event-specific query?
             if(req.query["event"]){
                 let event = await this.events.findOne({_id : datsrc["event"]})
@@ -175,6 +179,7 @@ class Server{
                 res.type('text')
                 let token = jwt.sign({_id:kiosk._id}, this.sign_privatekey, {algorithm: 'RS256'})
                 res.send(token)
+                console.log(`Enrolled ${name} as ${kiosk._id}`)
             }
             else{
                 res.status(409)
