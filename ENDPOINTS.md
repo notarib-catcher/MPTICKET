@@ -62,10 +62,8 @@ Returns
 ```
 ***
 ## GET /assignment
-```json
-{
-    "kioskToken" : "signed.kiosk.token"
-}
+```
+&kioskToken=signed.kiosk.token
 ```
 Returns
 ```
@@ -74,7 +72,7 @@ Returns
 401 - token invalid
 409 - enrollment status conflict (kiosk enrollment not finished)
 204 - no assignment
-200 - Success - Body contains the assignment string
+200 - Success - Body contains the assignment string formatted as "<assignment name>+<assignment id>"
 ```
 ***
 ## GET /key

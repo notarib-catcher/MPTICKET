@@ -98,7 +98,7 @@ class Server{
             }
 
             //is there an event-specific query?
-            if(req.query["event"]){
+            if(datsrc["event"] && datsrc["event"] != "!ALL!"){
                 let event = await this.events.findOne({_id : datsrc["event"]})
                 if(event){
                     //event is valid
@@ -171,7 +171,10 @@ class Server{
                 await this.kiosks.updateOne({_id : kiosk._id}, {
                     $set: {
                         "enrollDone" : true,
-                        "assignment" : "",
+                        "assignment" : {
+                            "name": "",
+                            "id": ""
+                        },
                         "name" : name
                     }
                 })
@@ -225,7 +228,7 @@ class Server{
                     throw error
                 }
                 //make sure it is assigned to the event
-                if(!kiosk.assignment.includes(event) && !kiosk.assignment.includes('!ALL!')){
+                if(!kiosk.assignment.id.includes(event) && !kiosk.assignment.id.includes('!ALL!')){
                     throw error
                 }
                 //all checks met! lets add attendance!
@@ -287,7 +290,7 @@ class Server{
                 throw "409"
             }
 
-            if(kiosk.assignment == ""){
+            if(kiosk.assignment.id == ""){
                 res.status(204)
                 res.type('text')
                 res.send("No assignment")
@@ -296,7 +299,7 @@ class Server{
 
             res.status(200)
             res.type('text')
-            res.send(kiosk.assignment)
+            res.send(kiosk.assignment.name + "+" + kiosk.assignment.id)
         }
 
         catch(error){
