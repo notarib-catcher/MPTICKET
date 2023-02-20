@@ -67,6 +67,7 @@ class Server{
 
     verify = async (req,res) => {
         let checks = await this.verifytoken(req,res).catch(error => console.error)
+        console.log(req.query)
         res.type('text')
         res.status(checks[0])
         res.send(checks[1])
@@ -98,7 +99,7 @@ class Server{
             }
 
             //is there an event-specific query?
-            if(datsrc["event"] && datsrc["event"] != "!ALL!"){
+            if(datsrc["event"] && !datsrc["event"].includes("!ALL!")){
                 let event = await this.events.findOne({_id : datsrc["event"]})
                 if(event){
                     //event is valid
@@ -207,6 +208,14 @@ class Server{
             res.send("Malformed request")
             return;
         }
+
+        if(event.includes("!ALL!")){
+            res.status(406)
+            res.type('text')
+            res.send("Cannot mark attendance on ALL")
+            return;
+        }
+
         let tokenStatus = await this.verifytoken(req, res, false)
         
         if(tokenStatus[0] != 200){
@@ -280,7 +289,14 @@ class Server{
             res.send('Malformed request')
         }
         try {
-            let decoded = jwt.verify(kiosktoken, this.sign_publickey)
+            let decoded = ""
+            try{
+                decoded = jwt.verify(kiosktoken, this.sign_publickey)
+            }
+
+            catch(error){
+                throw "401"
+            }
             let kiosk = await this.kiosks.findOne({_id : decoded._id})
             if(!kiosk){
                 throw "404"
@@ -290,7 +306,7 @@ class Server{
                 throw "409"
             }
 
-            if(kiosk.assignment.id == ""){
+            if(!kiosk.assignment || kiosk.assignment.id == ""){
                 res.status(204)
                 res.type('text')
                 res.send("No assignment")
@@ -304,19 +320,25 @@ class Server{
 
         catch(error){
             if(error == "404"){
-                res.status = 404
+                res.status(404)
                 res.send("Entry not found")
                 return
             }
 
             if(error == "409"){
-                res.status = 404
+                res.status(409)
                 res.send("Misconfigured endpoint")
                 return
             }
+            
+            if(error == "401"){
+                res.status(401)
+                res.send("Unable to authenticate")
+                return
+            }
 
-            res.status(401)
-            res.send("Unable to authenticate")
+            res.status(500)
+            res.send("Unable to process request")
         }
     }
 

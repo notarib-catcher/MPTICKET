@@ -58,6 +58,7 @@ Returns
 401 - Authentication error (kiosk/ticket)
 409 - Misconfigured endpoint - forces kiosk to wipe all cached data EXCEPT kiosktoken and URL, then poll /assignment for the new assignment.
  + Same errors as /verify
+406 - error: Can't mark attendance for "!ALL!" (Wildcard event)
 200 - Success
 ```
 ***
