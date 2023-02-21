@@ -67,7 +67,6 @@ class Server{
 
     verify = async (req,res) => {
         let checks = await this.verifytoken(req,res).catch(error => console.error)
-        console.log(req.query)
         res.type('text')
         res.status(checks[0])
         res.send(checks[1])
@@ -245,7 +244,7 @@ class Server{
                 
                 //redundant check
                 if(!ticket){
-                    res.set(404)
+                    res.status(404)
                     res.send("Failed to query ticket")
                     return
                 }
