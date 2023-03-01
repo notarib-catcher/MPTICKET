@@ -3,7 +3,7 @@
 A ticketing system for events - built for the requirements of Manipal Institute of Technology, Bengaluru.
 
 Details about endpoints and their functions in `./ENDPOINTS.md` and the documentation about the database structure is in `./DBSTRUCTURE.md`
-(A separate MongoDB instance is required to use this)
+(This version has been modified to work with PostgreSQL)
 *** 
 Will add documentation about kiosk behaviour here once the Android kiosk app is ready.
 *** 
