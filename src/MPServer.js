@@ -35,7 +35,7 @@ class Server{
                 let uuid = uuidv4();
                 try{
                     let data = {"_id" : uuid, name: decoded.name, type: decoded.type, phone: decoded.phone }
-                    let token = jwt.sign(data, this.sign_privatekey, {algorithm: 'RS256'})
+                    let token = jwt.sign(data, this.sign_privatekey, {algorithm: 'RS256', allowInsecureKeySizes: true})
                     this.tickets.insertOne(data)
                     res.type('text')
                     res.status(201)
@@ -180,7 +180,7 @@ class Server{
                 })
                 res.status(200)
                 res.type('text')
-                let token = jwt.sign({_id:kiosk._id}, this.sign_privatekey, {algorithm: 'RS256'})
+                let token = jwt.sign({_id:kiosk._id}, this.sign_privatekey, {algorithm: 'RS256', allowInsecureKeySizes:true})
                 res.send(token)
                 console.log(`Enrolled ${name} as ${kiosk._id}`)
             }
@@ -236,7 +236,7 @@ class Server{
                     throw error
                 }
                 //make sure it is assigned to the event
-                if(!kiosk.assignment.id.includes(event) && !kiosk.assignment.id.includes('!ALL!')){
+                if(!kiosk.assignment.id.includes(event)){
                     throw error
                 }
                 //all checks met! lets add attendance!
