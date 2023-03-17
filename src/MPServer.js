@@ -168,6 +168,7 @@ class Server{
 
         if(kiosk){
             if(!kiosk.enrollDone){
+                console.log(`Updating kiosk configuration on database...`)
                 await this.kiosks.updateOne({_id : kiosk._id}, {
                     $set: {
                         "enrollDone" : true,
@@ -178,9 +179,10 @@ class Server{
                         "name" : name
                     }
                 })
+                console.log(`Updated database`)
                 res.status(200)
                 res.type('text')
-                let token = jwt.sign({_id:kiosk._id}, this.sign_privatekey, {algorithm: 'RS256'})
+                let token = jwt.sign({_id:kiosk._id}, this.sign_privatekey, {algorithm: 'RS256', allowInsecureKeySizes: true})
                 res.send(token)
                 console.log(`Enrolled ${name} as ${kiosk._id}`)
             }
