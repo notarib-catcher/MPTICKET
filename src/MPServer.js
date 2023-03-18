@@ -16,6 +16,7 @@ class Server{
         this.kiosks = this.mongo.db(config.DBName).collection('kiosks')
         this.alerts = this.mongo.db(config.DBName).collection('alerts')
         this.events = this.mongo.db(config.DBName).collection('events')
+        this.tracking = this.mongo.db(config.DBName).collection('tracking')
         this.sign_privatekey = privatekey
         this.sign_publickey = publickey
         this.config = config
@@ -35,7 +36,7 @@ class Server{
                 let uuid = uuidv4();
                 try{
                     let data = {"_id" : uuid, name: decoded.name, type: decoded.type, phone: decoded.phone }
-                    let token = jwt.sign(data, this.sign_privatekey, {algorithm: 'RS256'})
+                    let token = jwt.sign(data, this.sign_privatekey, {algorithm: 'RS256',allowInsecureKeySizes: true})
                     this.tickets.insertOne(data)
                     res.type('text')
                     res.status(201)
@@ -254,8 +255,26 @@ class Server{
                 let newattendance = ticket.eventsAttended || ""
                 newattendance = newattendance + "," + event
 
-                await this.tickets.updateOne({_id : ticket._id}, {$set:{eventsAttended : newattendance}})
+                await this.tickets.updateOne({_id : ticket._id}, 
+                    {
+                        $set: {
+                            eventsAttended : newattendance
+                        }
+                    })
+                //log time
+                let cTime = new Date()
 
+                //Log the attendance in the tracking collection
+                await this.tracking.insertOne(
+                    {
+                        ticket: ticket._id, 
+                        event: event, 
+                        kiosk: kioskdecoded._id,
+                        time: {
+                            string: cTime.toLocaleString(),
+                            epoch: cTime.getTime()
+                        }
+                    })
                 res.status(200)
                 res.type('text')
                 res.send('Updated attendance')
