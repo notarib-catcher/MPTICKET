@@ -73,6 +73,10 @@ class Server{
         res.send(checks[1])
     }
 
+    /**
+     * @param {Express.Request} req 
+     * @param {Express.Response} res 
+     */
 
 
     verifytoken = async (req,res,query = true) => {
@@ -147,6 +151,11 @@ class Server{
         }
     }
 
+    /**
+     * @param {Express.Request} req 
+     * @param {Express.Response} res 
+     */
+
 
     enroll = async (req,res) => {
         if(!this.config.enrollment){
@@ -200,6 +209,11 @@ class Server{
             res.send("Instance not found")
         }
     }
+
+    /**
+     * @param {Express.Request} req 
+     * @param {Express.Response} res 
+     */
 
     mark = async (req,res) => {
         let event = req.body.event
@@ -301,6 +315,11 @@ class Server{
 
     }
 
+    /**
+     * @param {Express.Request} req 
+     * @param {Express.Response} res 
+     */
+
     assignment = async (req,res) => {
         let kiosktoken = req.query.kioskToken
         if(!kiosktoken){
@@ -360,7 +379,13 @@ class Server{
             res.status(500)
             res.send("Unable to process request")
         }
-    }
+    }        
+    
+    /**
+     * @param {Express.Request} req 
+     * @param {Express.Response} res 
+     */
+
 
     getkey = async (req,res) => {
         res.type('text')
