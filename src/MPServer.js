@@ -76,8 +76,8 @@ class Server{
     /**
      * @param {Express.Request} req 
      * @param {Express.Response} res 
+     * @param {boolean} query Whether the request data is in the req.query or req.body
      */
-
 
     verifytoken = async (req,res,query = true) => {
         try{
@@ -155,7 +155,6 @@ class Server{
      * @param {Express.Request} req 
      * @param {Express.Response} res 
      */
-
 
     enroll = async (req,res) => {
         if(!this.config.enrollment){
@@ -385,7 +384,6 @@ class Server{
      * @param {Express.Request} req 
      * @param {Express.Response} res 
      */
-
 
     getkey = async (req,res) => {
         res.type('text')
