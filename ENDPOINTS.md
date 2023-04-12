@@ -3,7 +3,7 @@
 ## POST /sign
 ```json
 {
-    "token" : "Signed JWT from the webserver containing the 'name', 'type' and 'phone'"
+    "token" : "Signed JWT from the webserver containing the 'name', 'type', 'phone' and 'email'"
 }
 ```
 Returns
