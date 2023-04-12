@@ -35,7 +35,7 @@ class Server{
             if (decoded) {
                 let uuid = uuidv4();
                 try{
-                    let data = {"_id" : uuid, name: decoded.name, type: decoded.type, phone: decoded.phone }
+                    let data = {"_id" : uuid, name: decoded.name, type: decoded.type, phone: decoded.phone, email: decoded.email }
                     let token = jwt.sign(data, this.sign_privatekey, {algorithm: 'RS256',allowInsecureKeySizes: true})
                     this.tickets.insertOne(data)
                     res.type('text')
