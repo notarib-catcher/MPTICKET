@@ -4,3 +4,5 @@ Dockerfile
 keys/*.pem
 keys/*.old
 *.old
+GetEmails.js
+*.dat
