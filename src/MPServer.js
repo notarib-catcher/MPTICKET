@@ -117,7 +117,7 @@ class Server{
                     
                     
                     //check if the pass is allowed to access that event
-                    if(!event.typesAllowed.includes(decoded.type) && !event.typesAllowed.includes("!ALL!")){
+                    if(!event.typesAllowed.includes(decoded.type) && !event.typesAllowed.includes("!ALL!") && decoded.type != '!ALL!'){
                         return[403, `this ticket type cannot access ${event.name}`];
                     }
 
@@ -259,9 +259,9 @@ class Server{
                 let ticket = await this.tickets.findOne({_id: decoded._id})
                 
                 //redundant check
-                if(!ticket){
+                if(!ticket || ticket.type == "!STAFF!"){
                     res.status(404)
-                    res.send("Failed to query ticket")
+                    res.send("Failed to query ticket OR was staff ticket")
                     return
                 }
 
