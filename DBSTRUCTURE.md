@@ -5,7 +5,7 @@
 {
     "_id" : "TICKET UUID",
     "Name" : "HOLDER NAME",
-    "type" : "Case-sensitive ticket type (ex. gold, silver, etc.) or !STAFF! for full-access to all events (Note: !STAFF! can only be overridden by !FULL! revocation)",
+    "type" : "Case-sensitive ticket type (ex. gold, silver, etc.) or !STAFF!/!ALL! for full-access to all events (Note: !STAFF! can only be overridden by !FULL! revocation), Staff passes have no attendance, !ALL! passes have attendance checking enabled",
     "phone" : "Holders phone number",
     "eventsAttended" : "COMMA-SEPARATED eventIDs that the holder has attended"
 }
