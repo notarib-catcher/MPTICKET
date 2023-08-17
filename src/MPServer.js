@@ -249,11 +249,11 @@ class Server{
                 //make sure kiosk still exists in pool
                 let kiosk = await this.kiosks.findOne({_id:kioskdecoded._id})
                 if(!kiosk){
-                    throw error
+                    throw "kiosk-invalid"
                 }
                 //make sure it is assigned to the event
                 if(!kiosk.assignment.id.includes(event) && !kiosk.assignment.id.includes('!ALL!')){
-                    throw error
+                    throw "event-invalid"
                 }
                 //all checks met! lets add attendance!
                 let ticket = await this.tickets.findOne({_id: decoded._id})
